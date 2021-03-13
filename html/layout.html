@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>{{ block "title" .}}{{ end }} :: licenseplate.wtf</title>
+    <link rel="stylesheet" href="/static/app.css"/>
+  </head>
+
+  <body>
+    <div class="container">
+      <nav class="header">
+        <a href="/" class="logo">licenseplate.wtf</a>
+      </nav>
+      <section class="content">
+        {{ block "content" .}}
+        {{ end }}
+      </section>
+      <nav class="footer">
+        &copy; {{ time "2006" }} Shreve Labs, LLC
+      </nav>
+    </div>
+    <script type="application/javascript" src="/static/app.js"></script>
+  </body>
+</html>

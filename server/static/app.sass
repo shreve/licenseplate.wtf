@@ -1,0 +1,195 @@
+$color: blue
+
+body
+  font-family: monospace
+  color: $color
+  margin: 0
+  padding: 0
+  min-height: 100vh
+
+*, *::before, *::after
+  box-sizing: border-box
+
+.container
+  width: 42em
+  max-width: 100%
+  padding: 0 1.5em
+  margin: 0 auto
+  display: flex
+  flex-direction: column
+  min-height: 100vh
+
+.content
+  flex-grow: 1
+
+header
+  text-align: center
+
+em
+  text-align: center
+
+h1
+  font-size: 2.5em
+  text-align: center
+
+h2
+  font-size: 2.0em
+
+$t: 0.15em
+
+.license-plate
+  font-size: 5em
+  border: $t solid $color
+  border-radius: $t
+  color: $color
+  font-weight: bold
+  padding: 2*$t+0.2 0.3em 2*$t+0.1
+  display: inline-block
+  box-sizing: border-box
+  position: relative
+  text-transform: uppercase
+  margin: 0 0 0.5em
+
+  &::before, &::after
+    position: absolute
+    content: ''
+    display: inline-block
+    background: $color
+    width: 100%
+    height: $t
+    padding: 0
+    margin: 0
+
+  &::before
+    left: 0
+    top: $t
+
+  &::after
+    left: 0
+    bottom: $t
+
+  input
+    border: none
+    font: inherit
+    width: 100%
+    color: inherit
+    margin: 0
+    padding: 0
+    text-transform: uppercase
+    text-align: center
+
+ul
+  padding: 0
+
+.comment
+  list-style-type: none
+  margin: 2em 0
+
+  h4
+    font-size: 2em
+    text-transform: uppercase
+    margin: 0
+
+p
+  font-size: 1.5em
+  margin-top: 0
+
+
+.input
+  border: 0.25em solid $color
+  border-radius: 0.5em
+  margin: 0 0 1em
+  position: relative
+  width: 100%
+
+  label
+    display: block
+    font-size: 1.25em
+    width: 100%
+    padding: 0.5em 0.5em 0
+    background: transparent
+
+  input, textarea
+    left: 0
+    top: 1.25em
+    display: block
+    width: 100%
+    padding: 0.3em 0.75em
+    margin: 0
+    z-index: 0
+    font: inherit
+    font-size: 2em
+    color: inherit
+    border: 0
+
+    &:disabled
+      background: transparent
+
+  input
+    font-weight: bold
+    text-transform: uppercase
+
+  textarea
+    bottom: 0
+    font-size: 1.5em
+    height: 3em
+
+label
+  vertical-align: middle
+
+input[type="checkbox"]
+  border: 0.25em solid $color
+  appearance: none
+  width: 2em
+  height: 2em
+  vertical-align: middle
+  display: inline-block
+  position: relative
+
+  &:checked::before
+    content: '\00D7'
+    font-size: 3em
+    top: 41%
+    left: -4%
+    position: absolute
+    line-height: 0
+
+.button-input
+  width: 20em
+  margin: 0 0 0 auto
+
+.button
+  font-family: inherit
+  font-weight: bold
+  font-size: 1.5em
+  background: $color
+  color: white
+  border-radius: $t*3
+  border: none
+  display: inline-block
+  text-align: center
+  padding: 1em
+
+.center
+  text-align: center
+
+.logo
+  text-decoration: none
+  color: $color
+  font-size: 2em
+  font-weight: bold
+  padding: 0.5em 0
+  display: block
+
+nav
+  width: 100%
+  padding: 0 1.5em
+
+  &.header
+    border-bottom: 0.25em solid $color
+    text-align: right
+
+  &.footer
+    border-top: 0.25em solid $color
+    margin-top: 1em
+    padding: 1em
