@@ -1,11 +1,13 @@
 package server
 
 type config struct {
-	Port string
+	Port         string
+	CacheEnabled bool
 }
 
 func loadConfig() *config {
 	return &config{
-		Port: ":8081",
+		Port:         ":8081",
+		CacheEnabled: false,
 	}
 }

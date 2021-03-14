@@ -1,3 +1,49 @@
 {{ block "content" . }}
-This is a single plate.
+<header>
+
+  <h2>WTF does this mean?</h2>
+
+  <div class="license-plate">
+    <h1>{{ .Plate.Code }}</h1>
+  </div>
+
+</header>
+<ul>
+  <li class="comment">
+    <p class="center">
+      <em>This license plate doesn't have any interpretations.</em>
+      <br>
+      <br>
+      <em>Want to add yours?</em>
+    </p>
+  </li>
+  <!-- <li class="comment"> -->
+  <!--   <h4><%= i.what %></h4> -->
+  <!--   <p><%= i.why %></p> -->
+  <!-- </li> -->
+  <li class="comment comment-form">
+    <h4>Add Interpretation</h4>
+
+    <form>
+      <input type="hidden" name="plate_id" />
+
+      <div class="input">
+        <label>What does it mean?</label>
+        <input type="text" name="what" maxlength=30 />
+      </div>
+
+      <div class="input">
+        <label>Why do you think that?</label>
+        <textarea name="why" maxlength=300></textarea>
+      </div>
+
+      <input type="checkbox" name="responsibility" />
+      <label>I agree to be responsible</label>
+
+      <div class="input button-input">
+        <input type="submit" value="Chime In" />
+      </div>
+    </form>
+  </li>
+</ul>
 {{ end }}

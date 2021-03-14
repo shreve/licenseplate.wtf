@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>{{ block "title" .}}{{ end }} :: licenseplate.wtf</title>
+    <title>{{ .Page.Title }} :: licenseplate.wtf</title>
     <link rel="stylesheet" href="/static/app.css"/>
+    <link rel="canonical" href="{{ .Page.Canonical }}" />
   </head>
 
   <body>
@@ -16,7 +17,7 @@
         {{ block "content" .}}
         {{ end }}
       </section>
-      <nav class="footer">
+      <nav class="footer center">
         &copy; {{ time "2006" }} Shreve Labs, LLC
       </nav>
     </div>

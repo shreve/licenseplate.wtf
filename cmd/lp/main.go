@@ -35,6 +35,14 @@ var serve = &cobra.Command{
 				)
 				cmd.Stdout = os.Stdout
 				cmd.Run()
+
+				cmd = exec.Command(
+					"memcached",
+					"--port",
+					"11211",
+				)
+				cmd.Stdout = os.Stdout
+				cmd.Run()
 			}()
 		}
 

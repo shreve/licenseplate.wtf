@@ -83,6 +83,10 @@ h2 {
   text-transform: uppercase;
   text-align: center;
 }
+.license-plate * {
+  font-size: 1em;
+  margin: 0;
+}
 
 ul {
   padding: 0;
@@ -141,6 +145,7 @@ p {
   bottom: 0;
   font-size: 1.5em;
   height: 3em;
+  resize: none;
 }
 
 label {

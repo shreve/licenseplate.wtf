@@ -6,10 +6,11 @@ import (
 
 func (s *server) routes() {
 	s.router = mux.NewRouter().StrictSlash(true)
-
-	s.router.HandleFunc("/", home)
-	s.router.HandleFunc("/plates", plateList)
-	s.router.HandleFunc("/plates/{code}", plateShow)
-
 	s.router.PathPrefix("/static/").Handler(StaticFiles)
+
+	s.router.Use(s.logging)
+
+	s.router.HandleFunc("/", s.home)
+	s.router.HandleFunc("/plates", s.plateList)
+	s.router.HandleFunc("/plates/{code}", s.plateShow)
 }
