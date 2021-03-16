@@ -24,19 +24,13 @@ create table if not exists interpretations (
   username text not null,
   plate_id integer not null,
   created_at text default current_timestamp,
-  updated_at text default current_timestamp,
 
   unique (plate_id, what),
 
   foreign key (plate_id) references plates (id) on delete cascade
 );
 
-create trigger if not exists interpretations_update_pre before update on interpretations
-begin
-  update interpretations set updated_at = current_timestamp where id = new.id;
-end;
-
-create trigger if not exists interpretations_update_post after update on interpretations
+create trigger if not exists interpretations_insert_post after insert on interpretations
 begin
   update plates set updated_at = current_timestamp where id = new.plate_id;
 end;

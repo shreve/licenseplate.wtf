@@ -10,7 +10,8 @@ type PageData struct {
 }
 
 type genericParams struct {
-	Page PageData
+	Page   PageData
+	Errors []string
 }
 
 var domain = "licenseplate.wtf"
@@ -19,3 +20,5 @@ func fullURL(bits ...string) string {
 	bits = append([]string{"https:/", domain}, bits...)
 	return strings.Join(bits, "/")
 }
+
+type ParamsMap map[string]interface{}

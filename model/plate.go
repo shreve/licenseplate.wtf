@@ -8,10 +8,11 @@ import (
 )
 
 type Plate struct {
-	id        int64
-	Code      string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Id              int64
+	Code            string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	Interpretations []Interpretation
 }
 
 func NewPlate(code string) *Plate {
@@ -27,12 +28,13 @@ func (p *Plate) Valid() bool {
 
 func (p *Plate) FindOrCreate() bool {
 	rows, err := db.Query("find_plate", p.Code)
+	defer rows.Close()
 	if err != nil || !rows.Next() {
 		return p.Create()
 	}
 	var createdAt string
 	var updatedAt string
-	err = rows.Scan(&p.id, &p.Code, &createdAt, &updatedAt)
+	err = rows.Scan(&p.Id, &p.Code, &createdAt, &updatedAt)
 	if err != nil {
 		log.Println("Failed", err)
 		return false
@@ -47,7 +49,7 @@ func (p *Plate) Create() bool {
 	if err != nil {
 		return false
 	}
-	p.id, _ = res.LastInsertId()
+	p.Id, _ = res.LastInsertId()
 
 	// Little cheat code
 	p.CreatedAt = time.Now().UTC().Truncate(time.Second)
@@ -55,18 +57,17 @@ func (p *Plate) Create() bool {
 	return true
 }
 
-func (p Plate) FindUpdateTimestamp() bool {
-	rows, err := db.Query("find_plate_update_timestamp", p.Code)
+func (p *Plate) LoadInterpretations() {
+	rows, err := db.Query("find_interpretations", p.Id)
+	defer rows.Close()
 	if err != nil {
-		return false
+		return
 	}
-	var timestamp string
-	rows.Next()
-	rows.Scan(&timestamp)
-	parsed, err := time.Parse(db.ISO8601, timestamp)
-	if err != nil {
-		return false
+
+	p.Interpretations = make([]Interpretation, 0)
+	for rows.Next() {
+		interp := Interpretation{}
+		interp.FromRow(rows)
+		p.Interpretations = append(p.Interpretations, interp)
 	}
-	p.UpdatedAt = parsed
-	return true
 }

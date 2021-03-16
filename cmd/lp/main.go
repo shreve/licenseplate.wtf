@@ -29,6 +29,8 @@ var serve = &cobra.Command{
 			go func() {
 				cmd := exec.Command(
 					"/usr/bin/sass",
+					"--style=compressed",
+					"--no-source-map",
 					"--watch",
 					"server/static/app.sass",
 					"server/static/app.css",

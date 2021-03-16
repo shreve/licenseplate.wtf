@@ -9,6 +9,13 @@
 
 </header>
 <ul>
+  {{ range .Plate.Interpretations }}
+  <li class="comment">
+    <h4>{{ .What }}</h4>
+    <p>{{ .Why }}</p>
+    by <b>{{ .Username }}</b>
+  </li>
+  {{ else }}
   <li class="comment">
     <p class="center">
       <em>This license plate doesn't have any interpretations.</em>
@@ -17,32 +24,38 @@
       <em>Want to add yours?</em>
     </p>
   </li>
-  <!-- <li class="comment"> -->
-  <!--   <h4><%= i.what %></h4> -->
-  <!--   <p><%= i.why %></p> -->
-  <!-- </li> -->
+  {{ end }}
+
   <li class="comment comment-form">
     <h4>Add Interpretation</h4>
 
-    <form>
-      <input type="hidden" name="plate_id" />
+    {{ if .Errors }}
+    <ul class="form-errors">
+      {{ range .Errors }}
+      <li>{{ . }}</li>
+      {{ end }}
+    </ul>
+    {{ end }}
+
+    <form action="/plates/{{ .Plate.Code }}/interpretations" method="POST">
 
       <div class="input">
-        <label>What does it mean?</label>
-        <input type="text" name="what" maxlength=30 />
+        <label for="what">What does it mean?</label>
+        <input type="text" name="what" minlength=5 maxlength=30 required/>
       </div>
 
       <div class="input">
-        <label>Why do you think that?</label>
-        <textarea name="why" maxlength=300></textarea>
+        <label for="why">Why do you think that?</label>
+        <textarea name="why" minlength=10 maxlength=300 required></textarea>
       </div>
 
-      <input type="checkbox" name="responsibility" />
-      <label>I agree to be responsible</label>
+      <input type="checkbox" name="responsibility" required/>
+      <label for="responsibility">I agree to be responsible</label>
 
       <div class="input button-input">
         <input type="submit" value="Chime In" />
       </div>
+
     </form>
   </li>
 </ul>

@@ -36,20 +36,16 @@ func Home(w io.Writer) {
 
 var plateShow = parse("plates/show.html")
 
-func PlateShow(w io.Writer, plate model.Plate) {
-	type plateShowParams struct {
-		Plate model.Plate
-		Page  PageData
-	}
-	data := plateShowParams{
-		Plate: plate,
-		Page: PageData{
-			Title:     "What does the license plate " + plate.Code + " mean?",
-			Canonical: fullURL("plates", plate.Code),
-		},
+func PlateShow(w io.Writer, data ParamsMap) {
+	code := data["Plate"].(*model.Plate).Code
+	data["Page"] = PageData{
+		Title:     "What does the license plate " + code + " mean?",
+		Canonical: fullURL("plates", code),
 	}
 	util.LogTime("Rendering plate/show.html", func() {
-		plateShow.Execute(w, data)
+		if err := plateShow.Execute(w, data); err != nil {
+			log.Println(err)
+		}
 	})
 }
 
