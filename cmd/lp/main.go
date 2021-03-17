@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/spf13/cobra"
 
+	"licenseplate.wtf/model"
 	"licenseplate.wtf/server"
 )
 
@@ -55,8 +57,18 @@ var serve = &cobra.Command{
 	},
 }
 
+var name = &cobra.Command{
+	Use:   "name",
+	Short: "Generate a site name from the input",
+	Run: func(cmd *cobra.Command, args []string) {
+		input := strings.Join(args, " ")
+		fmt.Println(model.NameHash(input))
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(serve)
+	rootCmd.AddCommand(name)
 }
 
 func main() {

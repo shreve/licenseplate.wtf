@@ -31,10 +31,9 @@ func init() {
 // 3. Modulo the resulting numbers against list sizes
 // 4. Format the strings
 func NameHash(input string) string {
-	bytes := md5.New().Sum([]byte(input))
-	size := len(bytes) / 2
-	adj := bytes[0:size]
-	anm := bytes[size : 2*size]
+	bytes := md5.Sum([]byte(input))
+	adj := bytes[0:8]
+	anm := bytes[8:16]
 
 	adji := binary.BigEndian.Uint64(adj) % adjectiveLen
 	anmi := binary.BigEndian.Uint64(anm) % animalLen
