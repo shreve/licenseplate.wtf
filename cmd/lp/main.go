@@ -31,11 +31,13 @@ var serve = &cobra.Command{
 					"/usr/bin/sass",
 					"--style=compressed",
 					"--no-source-map",
+					"--no-error-css",
 					"--watch",
 					"server/static/app.sass",
 					"server/static/app.css",
 				)
 				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
 				cmd.Run()
 
 				cmd = exec.Command(
