@@ -8,6 +8,6 @@ type config struct {
 func loadConfig() *config {
 	return &config{
 		Port:         ":8081",
-		CacheEnabled: true,
+		CacheEnabled: false,
 	}
 }
