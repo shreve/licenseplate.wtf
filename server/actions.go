@@ -4,7 +4,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -28,9 +27,8 @@ func currentPlate(w http.ResponseWriter, r *http.Request) (*model.Plate, bool) {
 		return nil, false
 	}
 
-	if vars["code"] != plate.Code {
-		newUrl := strings.ReplaceAll(r.URL.Path, vars["code"], plate.Code)
-		http.Redirect(w, r, newUrl, http.StatusMovedPermanently)
+	if r.URL.Path != plate.URL() {
+		http.Redirect(w, r, plate.URL(), http.StatusMovedPermanently)
 		return nil, false
 	}
 

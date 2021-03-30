@@ -15,6 +15,7 @@ type genericParams struct {
 }
 
 var domain = "licenseplate.wtf"
+var baseURL = "https://" + domain
 
 func fullURL(bits ...string) string {
 	bits = append([]string{"https:/", domain}, bits...)

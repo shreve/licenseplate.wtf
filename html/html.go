@@ -37,10 +37,11 @@ func Home(w io.Writer) {
 var plateShow = parse("plates/show.html")
 
 func PlateShow(w io.Writer, data ParamsMap) {
-	code := data["Plate"].(*model.Plate).Code
+	plate := data["Plate"].(*model.Plate)
+	code := plate.Code
 	data["Page"] = PageData{
 		Title:     "What does the license plate " + code + " mean?",
-		Canonical: fullURL("plates", code),
+		Canonical: baseURL + plate.URL(),
 	}
 	util.LogTime("Rendering plate/show.html", func() {
 		if err := plateShow.Execute(w, data); err != nil {

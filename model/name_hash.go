@@ -32,11 +32,9 @@ func init() {
 // 4. Format the strings
 func NameHash(input string) string {
 	bytes := md5.Sum([]byte(input))
-	adj := bytes[0:8]
-	anm := bytes[8:16]
 
-	adji := binary.BigEndian.Uint64(adj) % adjectiveLen
-	anmi := binary.BigEndian.Uint64(anm) % animalLen
+	adji := binary.BigEndian.Uint64(bytes[0:8]) % adjectiveLen
+	anmi := binary.BigEndian.Uint64(bytes[8:16]) % animalLen
 
 	return adjectives[adji] + " " + animals[anmi]
 }

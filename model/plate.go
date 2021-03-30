@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"licenseplate.wtf/db"
 	"log"
 	"strings"
@@ -16,7 +17,12 @@ type Plate struct {
 }
 
 func NewPlate(code string) *Plate {
-	return &Plate{Code: strings.ToUpper(code)}
+	return &Plate{Code: strings.ReplaceAll(strings.ToUpper(code), "+", " ")}
+}
+
+func (p *Plate) URL() string {
+	slug := strings.ReplaceAll(p.Code, " ", "+")
+	return fmt.Sprintf("/plates/%s", slug)
 }
 
 func (p *Plate) Valid() bool {

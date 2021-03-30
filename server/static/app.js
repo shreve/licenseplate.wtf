@@ -15,44 +15,58 @@ function licenseplate(el) {
   })();
 
   let refresh = () => {
-    // input.size = size(input);
     input.style.width = 0;
     input.style.width = Math.max(initial, input.scrollWidth) + 'px';
     if (parentForm)
-      parentForm.action = "/plates/" + input.value.trim();
+      parentForm.action = "/plates/" + input.value.trim().toUpperCase();
   }
+
   let maxlen = parseInt(input.getAttribute('maxlength'));
-  let valid = /[0-9a-zA-Z ]+/;
+  let valid = /^[0-9a-zA-Z ]$/;
   let validate = (e) => {
+    if (e.key == "Enter") {
+      betterSubmit();
+      return
+    }
 
     // Only let in chars we want
-    if (!e.key.match(valid))
+    if (!e.key.match(valid)) {
       e.preventDefault();
+      return
+    }
 
     // Don't allow leading spaces
-    if (e.target.value == "" && e.key == " ")
+    if (e.target.value == "" && e.key == " ") {
       e.preventDefault();
+      return
+    }
 
     // Don't allow double spaces
-    if (e.target.value[e.target.value.length-1] == " " && e.key == " ")
+    if (e.target.value[e.target.value.length-1] == " " && e.key == " ") {
       e.preventDefault();
+      return
+    }
 
     // Fix the length insertion we break below
     if (e.target.value.length >= maxlen)
       return
+  }
 
-    // Only do uppercase inputs
-    if (e.key != e.key.toUpperCase()) {
-      e.preventDefault();
-      e.target.value += e.key.toUpperCase();
-      refresh();
-    }
+  let betterSubmit = (e) => {
+    if (e)
+      e.preventDefault()
 
+    if (parentForm.checkValidity())
+      window.location = parentForm.action;
+    else
+      parentForm.reportValidity()
   }
 
   refresh();
   input.addEventListener('input', refresh)
   input.addEventListener('keypress', validate)
+  if (parentForm)
+    parentForm.addEventListener('submit', betterSubmit)
 }
 
 function autoexpand(el) {

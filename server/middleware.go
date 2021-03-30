@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -56,10 +57,14 @@ func init() {
 	log.SetFlags(log.Flags() ^ log.Lmsgprefix)
 }
 
+var logLock sync.Mutex
+
 // Log details about each request
 func (s *server) logging(f http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rw := statusCodeLogger{w, 200}
+		logLock.Lock()
+		defer logLock.Unlock()
 		log.Printf("┌-> Started [%s] %s", r.Method, r.URL.Path)
 		log.SetPrefix("|   ")
 		start := time.Now()
