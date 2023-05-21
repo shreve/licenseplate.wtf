@@ -40,7 +40,12 @@ func (s *server) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) plateList(w http.ResponseWriter, r *http.Request) {
-	html.PlateList(w)
+	plates := model.AllPlates()
+	log.Println("Found list of plates", plates)
+
+	html.PlateList(w, html.ParamsMap{
+		"Plates": plates,
+	})
 }
 
 func (s *server) plateShow(w http.ResponseWriter, r *http.Request) {

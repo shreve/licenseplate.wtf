@@ -1,1 +1,1 @@
-select * from plates where plates.code = ?;
+SELECT * FROM plates WHERE plates.code = ?;

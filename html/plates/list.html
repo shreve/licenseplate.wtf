@@ -1,3 +1,14 @@
+{{- block "title" . -}} WTF do these plates mean? {{- end -}}
 {{ block "content" . }}
-This is a list of all the paltes.
+<header>
+  <h2>WTF do these mean?</h2>
+
+  {{ range .Plates }}
+  <a href="{{ .URL }}">
+    <div class="license-plate">
+      <h1>{{ .Code }}</h1>
+    </div>
+  </a>
+  {{ end }}
+</header>
 {{ end }}

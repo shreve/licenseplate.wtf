@@ -41,7 +41,7 @@ func PlateShow(w io.Writer, data ParamsMap) {
 	code := plate.Code
 	data["Page"] = PageData{
 		Title:     "What does the license plate " + code + " mean?",
-		Canonical: baseURL + plate.URL(),
+		Canonical: fullURL(plate.URL()),
 	}
 	util.LogTime("Rendering plate/show.html", func() {
 		if err := plateShow.Execute(w, data); err != nil {
@@ -52,6 +52,16 @@ func PlateShow(w io.Writer, data ParamsMap) {
 
 var plateList = parse("plates/list.html")
 
-func PlateList(w io.Writer) {
-	plateList.Execute(w, genericParams{})
+func PlateList(w io.Writer, data ParamsMap) {
+	data["Page"] = PageData{
+		Title:     "All license plates",
+		Canonical: fullURL("plates"),
+	}
+	data["Plates"] = data["Plates"].([]model.Plate)
+
+	util.LogTime("Rendering plate/list.html", func() {
+		if err := plateList.Execute(w, data); err != nil {
+			log.Println(err)
+		}
+	})
 }

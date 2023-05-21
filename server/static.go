@@ -11,7 +11,7 @@ import (
 
 //go:embed static/app.css static/app.js
 var files embed.FS
-var dev = true
+var dev = false
 
 // https://blog.carlmjohnson.net/post/2021/how-to-use-go-embed/#website-files
 var StaticFiles = func() http.Handler {

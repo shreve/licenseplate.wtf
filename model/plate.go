@@ -2,10 +2,13 @@ package model
 
 import (
 	"fmt"
-	"licenseplate.wtf/db"
 	"log"
 	"strings"
 	"time"
+
+	"database/sql"
+
+	"licenseplate.wtf/db"
 )
 
 type Plate struct {
@@ -18,6 +21,35 @@ type Plate struct {
 
 func NewPlate(code string) *Plate {
 	return &Plate{Code: strings.ReplaceAll(strings.ToUpper(code), "+", " ")}
+}
+
+func AllPlates() []Plate {
+	rows, err := db.Query("all_plates")
+	log.Println("Loaded all plates", rows, err)
+	defer rows.Close()
+	if err != nil {
+		log.Println("Failed", err)
+		return []Plate{}
+	}
+
+	plates := make([]Plate, 0)
+	for rows.Next() {
+		plate := Plate{}
+		plate.FromRow(rows)
+		plates = append(plates, plate)
+	}
+	return plates
+}
+
+func (p *Plate) FromRow(row *sql.Rows) {
+	created_at, updated_at := "", ""
+
+	if err := row.Scan(&p.Id, &p.Code, &created_at, &updated_at); err != nil {
+		log.Println("Failed", err)
+	}
+
+	p.CreatedAt, _ = time.Parse("2006-01-02 15:04:05", created_at)
+	p.UpdatedAt, _ = time.Parse("2006-01-02 15:04:05", updated_at)
 }
 
 func (p *Plate) URL() string {

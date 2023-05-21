@@ -1,21 +1,41 @@
-{{ block "title" . -}} WTF is licenseplace.wtf {{- end }}
-{{ block "content" . -}}
+{{- block "title" . -}} WTF is licenseplace.wtf {{- end -}}
+
+{{- block "content" . -}}
 <header>
   <h1>WTF is licenseplate.wtf?</h1>
 </header>
 
-<p>licenseplate.wtf is a place to share your thoughts on custom license plates.</p>
+<p>
+  licenseplate.wtf is a place to share your thoughts on custom license plates.
+</p>
 
-<p>Seen a strange one in the wild? Want to see what people think of your custom plate idea? Search below.</p>
+<p>
+  Saw a strange one in the wild? Want to see what people think of your custom
+  plate idea? Search below.
+</p>
 
+<p>
 <form method="GET" action="/plates/">
   <div class="center">
     <div class="license-plate">
-      <input type="text" placeholder="LP WTF" minlength="3" maxlength="10" size="4" pattern="[0-9A-Za-z ]" required/>
+      <input
+        type="text"
+        placeholder="LP WTF"
+        minlength="3"
+        maxlength="10"
+        size="4"
+        pattern="[0-9A-Za-z ]+"
+        required
+      />
     </div>
-    <br>
+    <br />
 
     <input class="button" type="submit" value="Search" />
   </div>
 </form>
+</p>
+
+<p>
+  <a href="/plates">Or click here to see what plates people are looking for.</a>
+</p>
 {{- end }}

@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"embed"
+	"log"
 	"sync"
 )
 
@@ -12,6 +13,7 @@ var Queries map[string]*sql.Stmt
 var writeLock sync.Mutex
 
 func Query(name string, args ...interface{}) (*sql.Rows, error) {
+	log.Println("Query", name, args)
 	return Queries[name].Query(args...)
 }
 

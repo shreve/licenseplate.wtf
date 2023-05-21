@@ -3,7 +3,9 @@ package db
 import (
 	"database/sql"
 	_ "embed"
-	_ "github.com/mattn/go-sqlite3"
+
+	// _ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 var DB *sql.DB
@@ -15,7 +17,7 @@ var schemaSql string
 
 func init() {
 	var err error
-	DB, err = sql.Open("sqlite3", "data.sqlite")
+	DB, err = sql.Open("sqlite", "data.sqlite")
 	if err != nil {
 		panic(err)
 	}
