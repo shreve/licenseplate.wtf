@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"time"
+	_ "time/tzdata"
 
 	// Additional imports needed for examples below
 
@@ -58,6 +59,7 @@ func StartDaemon() error {
 
 func Daemon() {
 	ET, _ := time.LoadLocation("America/Detroit")
+	// ET := time.FixedZone("America/Detroit", -5*60*60)
 
 	for {
 		// Calculate the next midnight based on current time
