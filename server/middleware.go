@@ -15,15 +15,15 @@ type statusCodeLogger struct {
 	Code int
 }
 
-func (s statusCodeLogger) Header() http.Header {
+func (s *statusCodeLogger) Header() http.Header {
 	return s.w.Header()
 }
 
-func (s statusCodeLogger) Write(content []byte) (int, error) {
+func (s *statusCodeLogger) Write(content []byte) (int, error) {
 	return s.w.Write(content)
 }
 
-func (s statusCodeLogger) WriteHeader(statusCode int) {
+func (s *statusCodeLogger) WriteHeader(statusCode int) {
 	s.Code = statusCode
 	s.w.WriteHeader(statusCode)
 }
@@ -65,11 +65,11 @@ func (s *server) logging(f http.Handler) http.Handler {
 		rw := statusCodeLogger{w, 200}
 		logLock.Lock()
 		defer logLock.Unlock()
-		log.Printf("┌-> Started [%s] %s", r.Method, r.URL.Path)
+		log.Printf("┌-| %s %s", r.Method, r.URL.Path)
 		log.SetPrefix("|   ")
 		start := time.Now()
-		f.ServeHTTP(rw, r)
+		f.ServeHTTP(&rw, r)
 		log.SetPrefix("")
-		log.Printf("└-> Completed [%s] %d %s (%s)\n\n", r.Method, rw.Code, r.URL.Path, time.Now().Sub(start))
+		log.Printf("└-> Responded with %d in %s\n\n", rw.Code, time.Now().Sub(start))
 	})
 }

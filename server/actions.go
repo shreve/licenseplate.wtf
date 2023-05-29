@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -27,11 +28,6 @@ func currentPlate(w http.ResponseWriter, r *http.Request) (*model.Plate, bool) {
 		return nil, false
 	}
 
-	if r.URL.Path != plate.URL() {
-		http.Redirect(w, r, plate.URL(), http.StatusMovedPermanently)
-		return nil, false
-	}
-
 	return plate, true
 }
 
@@ -52,6 +48,13 @@ func (s *server) plateShow(w http.ResponseWriter, r *http.Request) {
 	plate, found := currentPlate(w, r)
 
 	if !found {
+		log.Printf("Couldn't find the plate: %v", plate)
+		return
+	}
+
+	if r.Method == "GET" && !strings.HasPrefix(plate.URL(), r.URL.Path) {
+		log.Printf("Redirecting to canonical path: %s", plate.URL())
+		http.Redirect(w, r, plate.URL(), http.StatusMovedPermanently)
 		return
 	}
 
@@ -71,11 +74,13 @@ func (s *server) interpretationCreate(w http.ResponseWriter, r *http.Request) {
 	plate, found := currentPlate(w, r)
 
 	if !found {
+		log.Printf("Couldn't find the plate: %v", plate)
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
+		log.Printf("Couldn't parse the form data %s", err)
 		panic(err) // TODO
 	}
 
@@ -104,5 +109,6 @@ func (s *server) interpretationCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// See other because we are redirecting to the plate rather than the interpretation
 	http.Redirect(w, r, "/plates/"+plate.Code, http.StatusSeeOther)
 }
