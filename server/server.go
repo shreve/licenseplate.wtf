@@ -9,6 +9,8 @@ import (
 	"os/signal"
 
 	"github.com/gorilla/mux"
+
+	"licenseplate.wtf/db"
 )
 
 type server struct {
@@ -53,6 +55,11 @@ func (s *server) listenWithCancel() {
 		<-c
 		fmt.Printf("\r")
 		log.Println("Received interrupt. Shutting down server.")
+
+		// Backup the DB before shutting down in production.
+		if os.Getenv("ENV") == "production" {
+			db.Backup()
+		}
 
 		// Ask the server to shutdown.
 		if err := srv.Shutdown(context.Background()); err != nil {
