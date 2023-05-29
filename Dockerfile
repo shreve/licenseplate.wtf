@@ -17,11 +17,6 @@ COPY . .
 ENV CGO_ENABLED=0
 RUN go build -o /lp ./cmd/lp/
 
-FROM scratch AS release
-
-COPY --from=build /tini /tini
-COPY --from=build /lp /lp
-
 EXPOSE 8081
-ENTRYPOINT [ "/tini", "--", "/lp" ]
-CMD [ "serve" ]
+ENTRYPOINT [ "/tini", "--" ]
+CMD [ "/lp", "serve" ]

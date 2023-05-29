@@ -66,15 +66,15 @@ func (p *Plate) Valid() bool {
 
 func (p *Plate) FindOrCreate() bool {
 	rows, err := db.Query("find_plate", p.Code)
-	defer rows.Close()
 	if err != nil || !rows.Next() {
 		return p.Create()
 	}
+	defer rows.Close()
 	var createdAt string
 	var updatedAt string
 	err = rows.Scan(&p.Id, &p.Code, &createdAt, &updatedAt)
 	if err != nil {
-		log.Println("Failed", err)
+		log.Printf("Failed to load plate: %v", err)
 		return false
 	}
 	p.CreatedAt, _ = time.Parse(db.ISO8601, createdAt)
@@ -85,6 +85,7 @@ func (p *Plate) FindOrCreate() bool {
 func (p *Plate) Create() bool {
 	res, err := db.Exec("insert_plate", p.Code)
 	if err != nil {
+		log.Printf("Failed to create plate: %v", err)
 		return false
 	}
 	p.Id, _ = res.LastInsertId()

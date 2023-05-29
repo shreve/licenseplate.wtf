@@ -41,16 +41,23 @@ func StartDaemon() error {
 	daemonRunning = true
 
 	// If we can't find data.sql, restore from backup
-	if _, err := os.Stat(LOCATION); os.IsNotExist(err) {
+	stat, err := os.Stat(LOCATION)
+
+	empty := stat.Size() == 0
+
+	if err != nil || empty {
 		log.Printf("No %s found, restoring from backup", LOCATION)
 		err := Restore()
 		if err != nil {
 			log.Printf("Failed to restore database: %v", err)
 			return err
 		}
+	} else {
+		size := datasize.ByteSize(stat.Size())
+		log.Printf("Database already found in place (%s)", size.String())
 	}
 
-	log.Printf("Database found at %s. Starting backup daemon.", LOCATION)
+	log.Println("Starting backup daemon.")
 
 	// Otherwise, start the daemon
 	go Daemon()

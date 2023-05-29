@@ -18,6 +18,7 @@ func Query(name string, args ...interface{}) (*sql.Rows, error) {
 }
 
 func Exec(name string, args ...interface{}) (sql.Result, error) {
+	log.Println("Exec", name, args)
 	Lock.Lock()
 	defer Lock.Unlock()
 	return Queries[name].Exec(args...)

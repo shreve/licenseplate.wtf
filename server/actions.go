@@ -49,7 +49,6 @@ func (s *server) plateShow(w http.ResponseWriter, r *http.Request) {
 
 	if !found {
 		log.Printf("Couldn't find the plate: %v", plate)
-		return
 	}
 
 	if r.Method == "GET" && !strings.HasPrefix(plate.URL(), r.URL.Path) {
