@@ -24,3 +24,4 @@ COPY --from=build /lp /lp
 
 EXPOSE 8081
 ENTRYPOINT [ "/tini", "--", "/lp" ]
+CMD [ "serve" ]
