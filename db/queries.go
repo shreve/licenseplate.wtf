@@ -4,22 +4,22 @@ import (
 	"database/sql"
 	"embed"
 	"log"
-	"sync"
 )
 
 //go:embed queries/*.sql
 var rawQueries embed.FS
 var Queries map[string]*sql.Stmt
-var writeLock sync.Mutex
 
 func Query(name string, args ...interface{}) (*sql.Rows, error) {
 	log.Println("Query", name, args)
+	Lock.RLock()
+	defer Lock.RUnlock()
 	return Queries[name].Query(args...)
 }
 
 func Exec(name string, args ...interface{}) (sql.Result, error) {
-	writeLock.Lock()
-	defer writeLock.Unlock()
+	Lock.Lock()
+	defer Lock.Unlock()
 	return Queries[name].Exec(args...)
 }
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"licenseplate.wtf/db"
 	"licenseplate.wtf/model"
 	"licenseplate.wtf/server"
 )
@@ -52,6 +53,7 @@ var serve = &cobra.Command{
 			}()
 		}
 
+		db.StartDaemon()
 		s := server.NewServer()
 		s.ListenAndServe()
 	},
@@ -66,9 +68,30 @@ var name = &cobra.Command{
 	},
 }
 
+var backup = &cobra.Command{
+	Use:   "backup",
+	Short: "Database backup",
+}
+
 func init() {
+	backup.AddCommand(&cobra.Command{
+		Use:     "run",
+		Aliases: []string{"", "now"},
+		Short:   "Save a backup now",
+		Run: func(cmd *cobra.Command, args []string) {
+			db.Backup()
+		},
+	})
+	backup.AddCommand(&cobra.Command{
+		Use:   "restore",
+		Short: "Restore from a backup",
+		Run: func(cmd *cobra.Command, args []string) {
+			db.Restore()
+		},
+	})
 	rootCmd.AddCommand(serve)
 	rootCmd.AddCommand(name)
+	rootCmd.AddCommand(backup)
 }
 
 func main() {
