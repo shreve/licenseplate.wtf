@@ -8,40 +8,35 @@ import (
 
 //go:embed queries/*.sql
 var rawQueries embed.FS
-var Queries map[string]*sql.Stmt
+var Queries = make(map[string]*sql.Stmt)
 
 func Query(name string, args ...interface{}) (*sql.Rows, error) {
 	log.Println("Query", name, args)
 	Lock.RLock()
 	defer Lock.RUnlock()
-	return Queries[name].Query(args...)
+	return GetQuery(name).Query(args...)
 }
 
 func Exec(name string, args ...interface{}) (sql.Result, error) {
 	log.Println("Exec", name, args)
 	Lock.Lock()
 	defer Lock.Unlock()
-	return Queries[name].Exec(args...)
+	return GetQuery(name).Exec(args...)
 }
 
-func init() {
-	Queries = make(map[string]*sql.Stmt)
-
-	dirs, err := rawQueries.ReadDir("queries")
-	if err != nil {
-		panic(err)
-	}
-	for _, file := range dirs {
-		name := file.Name()
-		data, err := rawQueries.ReadFile("queries/" + name)
+func GetQuery(name string) *sql.Stmt {
+	// Read and prepare the query if it doesn't exist
+	query, ok := Queries[name]
+	if !ok {
+		data, err := rawQueries.ReadFile("queries/" + name + ".sql")
 		if err != nil {
 			panic(err)
 		}
-		name = name[0 : len(name)-4]
-		stmt, err := DB.Prepare(string(data))
+		query, err = DB.Prepare(string(data))
 		if err != nil {
 			panic(err)
 		}
-		Queries[name] = stmt
+		Queries[name] = query
 	}
+	return query
 }

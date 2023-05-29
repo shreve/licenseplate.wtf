@@ -47,7 +47,7 @@ func StartDaemon() error {
 	// If we can't find data.sql, restore from backup
 	stat, err := os.Stat(LOCATION)
 
-	empty := stat.Size() == 0
+	empty := err == nil && stat.Size() == 0
 
 	if err != nil || empty {
 		log.Printf("No %s found, restoring from backup", LOCATION)
@@ -183,5 +183,9 @@ func Restore() error {
 
 	size := datasize.ByteSize(n)
 	log.Printf("Restored %s from backup (%v)", LOCATION, size.String())
+
+	// Refresh the database connection
+	Refresh()
+
 	return nil
 }

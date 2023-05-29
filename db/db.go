@@ -5,13 +5,14 @@ import (
 	_ "embed"
 	"sync"
 
-	// _ "github.com/mattn/go-sqlite3"
-	_ "modernc.org/sqlite"
+	_ "github.com/mattn/go-sqlite3"
+	// _ "modernc.org/sqlite"
 )
 
 var DB *sql.DB
 var Lock sync.RWMutex
 
+const DRIVER = "sqlite3"
 const LOCATION = "data.sqlite"
 const ISO8601 = "2006-01-02 15:04:05"
 const KEYFMT = "backup/data-2006-01-02-15-04-05.sqlite"
@@ -21,7 +22,16 @@ var schemaSql string
 
 func init() {
 	var err error
-	DB, err = sql.Open("sqlite", LOCATION)
+	DB, err = sql.Open(DRIVER, LOCATION)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func Refresh() {
+	DB.Close()
+	var err error
+	DB, err = sql.Open(DRIVER, LOCATION)
 	if err != nil {
 		panic(err)
 	}
