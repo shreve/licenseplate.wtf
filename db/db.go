@@ -14,6 +14,7 @@ var Lock sync.RWMutex
 
 const LOCATION = "data.sqlite"
 const ISO8601 = "2006-01-02 15:04:05"
+const KEYFMT = "backup/data-2006-01-02-15-04-05.sqlite"
 
 //go:embed schema.sql
 var schemaSql string

@@ -1,8 +1,10 @@
 package db
 
 import (
+	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
 	_ "time/tzdata"
 
@@ -18,6 +20,8 @@ import (
 )
 
 var daemonRunning = false
+
+const sentinel = "backup/" + LOCATION
 
 func s3Client() *s3.S3 {
 	key := os.Getenv("SPACES_KEY")
@@ -105,14 +109,26 @@ func Backup() error {
 	}
 	defer file.Close()
 
+	key := time.Now().Format(KEYFMT)
 	result, err := uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String("licenseplate-wtf"),
-		Key:    aws.String("backup/" + LOCATION),
+		Key:    aws.String(key),
 		Body:   file,
 	})
 
 	if err != nil {
-		log.Printf("Failed to upload %s to S3: %v", LOCATION, err)
+		log.Printf("Failed to upload %s to S3: %v", key, err)
+		return err
+	}
+
+	_, err = uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String("licenseplate-wtf"),
+		Key:    aws.String(sentinel),
+		Body:   strings.NewReader(key),
+	})
+
+	if err != nil {
+		log.Printf("Failed to set backup/data.sqlite: %v", err)
 		return err
 	}
 
@@ -126,6 +142,19 @@ func Restore() error {
 	client := s3Client()
 	downloader := s3manager.NewDownloaderWithClient(client)
 
+	obj, err := client.GetObject(&s3.GetObjectInput{
+		Bucket: aws.String("licenseplate-wtf"),
+		Key:    aws.String(sentinel),
+	})
+	if err != nil {
+		log.Printf("Failed to download backup from S3: %v", err)
+		return err
+	}
+
+	key := new(strings.Builder)
+	io.Copy(key, obj.Body)
+	log.Printf("Restoring from %s", key.String())
+
 	file, err := os.Create(LOCATION + ".bak")
 	if err != nil {
 		log.Printf("Failed to create %s.bak for restore: %v", LOCATION, err)
@@ -134,7 +163,7 @@ func Restore() error {
 
 	n, err := downloader.Download(file, &s3.GetObjectInput{
 		Bucket: aws.String("licenseplate-wtf"),
-		Key:    aws.String("backup/" + LOCATION),
+		Key:    aws.String(key.String()),
 	})
 	if err != nil {
 		log.Printf("Failed to download backup from S3: %v", err)
