@@ -26,17 +26,17 @@ func init() {
 		tmplFS = files
 	} else {
 		_, file, _, _ := runtime.Caller(0)
-		dir := path.Join(path.Dir(file), "templates")
+		dir := path.Dir(file)
 		tmplFS = os.DirFS(dir)
 	}
 	log.Printf("Using %s for templates", tmplFS)
 }
 
 func parse(file string) *template.Template {
+	file = path.Join("templates", file)
 	log.Printf("Parsing %s from %v", file, tmplFS)
-
 	tmpl, err := template.New("layout.html").Funcs(FuncMap).ParseFS(
-		tmplFS, "layout.html", file,
+		tmplFS, "templates/layout.html", file,
 	)
 
 	return template.Must(tmpl, err)
