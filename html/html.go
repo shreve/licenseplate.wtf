@@ -3,25 +3,56 @@ package html
 import (
 	"embed"
 	"io"
+	"io/fs"
 	"log"
+	"os"
+	"path"
+	"runtime"
 	"text/template"
 
 	"licenseplate.wtf/model"
 	"licenseplate.wtf/util"
 )
 
-//go:embed *.html */*.html
+//go:embed templates/*.html templates/*/*.html
 var files embed.FS
+var tmplFS fs.FS
+var templates map[string]*template.Template
 
-func parse(file string) *template.Template {
-	return template.Must(
-		template.New("layout.html").Funcs(FuncMap).ParseFS(
-			files, "layout.html", file,
-		),
-	)
+func init() {
+	templates = make(map[string]*template.Template)
+
+	if os.Getenv("ENV") == "production" {
+		tmplFS = files
+	} else {
+		_, file, _, _ := runtime.Caller(0)
+		dir := path.Join(path.Dir(file), "templates")
+		tmplFS = os.DirFS(dir)
+	}
+	log.Printf("Using %s for templates", tmplFS)
 }
 
-var home = parse("home.html")
+func parse(file string) *template.Template {
+	log.Printf("Parsing %s from %v", file, tmplFS)
+
+	tmpl, err := template.New("layout.html").Funcs(FuncMap).ParseFS(
+		tmplFS, "layout.html", file,
+	)
+
+	return template.Must(tmpl, err)
+}
+
+func getTemplate(file string) *template.Template {
+	if os.Getenv("ENV") != "production" {
+		return parse(file)
+	}
+	if tmpl, ok := templates[file]; ok {
+		return tmpl
+	}
+	tmpl := parse(file)
+	templates[file] = tmpl
+	return tmpl
+}
 
 func Home(w io.Writer) {
 	data := genericParams{
@@ -31,10 +62,8 @@ func Home(w io.Writer) {
 		},
 	}
 	log.Println("Rendering home.html")
-	home.Execute(w, data)
+	getTemplate("home.html").Execute(w, data)
 }
-
-var plateShow = parse("plates/show.html")
 
 func PlateShow(w io.Writer, data ParamsMap) {
 	plate := data["Plate"].(*model.Plate)
@@ -44,13 +73,11 @@ func PlateShow(w io.Writer, data ParamsMap) {
 		Canonical: fullURL(plate.URL()),
 	}
 	util.LogTime("Rendering plate/show.html", func() {
-		if err := plateShow.Execute(w, data); err != nil {
+		if err := getTemplate("plates/show.html").Execute(w, data); err != nil {
 			log.Println(err)
 		}
 	})
 }
-
-var plateList = parse("plates/list.html")
 
 func PlateList(w io.Writer, data ParamsMap) {
 	data["Page"] = PageData{
@@ -60,7 +87,7 @@ func PlateList(w io.Writer, data ParamsMap) {
 	data["Plates"] = data["Plates"].([]model.Plate)
 
 	util.LogTime("Rendering plate/list.html", func() {
-		if err := plateList.Execute(w, data); err != nil {
+		if err := getTemplate("plates/list.html").Execute(w, data); err != nil {
 			log.Println(err)
 		}
 	})

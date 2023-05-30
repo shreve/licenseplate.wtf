@@ -4,10 +4,8 @@
   <h2>WTF do these mean?</h2>
 
   {{ range .Plates }}
-  <a href="{{ .URL }}">
-    <div class="license-plate">
-      <h1>{{ .Code }}</h1>
-    </div>
+  <a href="{{ .URL }}" class="license-plate small">
+    <h1>{{ .Code }}</h1>
   </a>
   {{ end }}
 </header>

@@ -1,3 +1,5 @@
+{{ template "layout.html" }}
+
 {{- block "title" . -}} WTF is licenseplace.wtf {{- end -}}
 
 {{- block "content" . -}}
@@ -23,7 +25,6 @@
         placeholder="LP WTF"
         minlength="3"
         maxlength="10"
-        size="4"
         pattern="[0-9A-Za-z ]+"
         required
       />

@@ -25,7 +25,6 @@ func NewPlate(code string) *Plate {
 
 func AllPlates() []Plate {
 	rows, err := db.Query("all_plates")
-	log.Println("Loaded all plates", rows, err)
 	defer rows.Close()
 	if err != nil {
 		log.Println("Failed", err)
@@ -38,6 +37,7 @@ func AllPlates() []Plate {
 		plate.FromRow(rows)
 		plates = append(plates, plate)
 	}
+	log.Printf("Loaded %d plates", len(plates))
 	return plates
 }
 
