@@ -14,7 +14,6 @@ RUN go mod download
 
 COPY . .
 
-ENV CGO_ENABLED=0
 RUN go build -o /lp ./cmd/lp/
 
 EXPOSE 8081
