@@ -29,6 +29,7 @@ func (v View) Render(out io.Writer, params Params) error {
 	params["Layout"] = v.Layout
 	params["Title"] = renderString(v.Title, &params)
 	params["Canonical"] = renderString(v.Canonical, &params)
+	log.Println("Rendering template", v.Template)
 	return views.ExecuteTemplate(out, v.Template, v.Layout, params)
 }
 
@@ -47,16 +48,21 @@ func init() {
 		views = blocks.New(files)
 	} else {
 		_, file, _, _ := runtime.Caller(0)
-		dir := path.Join(path.Dir(file), "html")
-		views = blocks.New(dir).Reload(true)
+		views = blocks.New(path.Dir(file)).Reload(true)
 	}
 
-	views = views.Funcs(FuncMap).DefaultLayout("main")
+	views = views.RootDir("html").Funcs(FuncMap).DefaultLayout("main")
 
 	err := views.Load()
 	if err != nil {
 		log.Fatalf("Error loading views: %v", err)
 	}
+
+	names := make([]string, 0, len(views.Templates))
+	for n := range views.Templates {
+		names = append(names, n)
+	}
+	log.Println("Loaded views:", names)
 }
 
 var Home = View{
