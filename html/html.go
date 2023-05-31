@@ -29,7 +29,6 @@ func init() {
 		dir := path.Dir(file)
 		tmplFS = os.DirFS(dir)
 	}
-	log.Printf("Using %s for templates", tmplFS)
 }
 
 func parse(file string) *template.Template {

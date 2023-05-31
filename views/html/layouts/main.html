@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>{{ .Title }} :: licenseplate.wtf</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <link rel="canonical" href="{{ .Canonical }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <nav class="header">
+        <a href="/" class="logo">licenseplate.wtf</a>
+      </nav>
+      <div class="notice">
+        <span
+          >Please Drive Responsibly.<br />Don't use this site while
+          driving.</span
+        >
+      </div>
+      <section class="content">{{ template "content" . }}</section>
+      <nav class="footer center">&copy; {{ time "2006" }} Shreve Labs, LLC</nav>
+    </div>
+    <script type="application/javascript" src="/static/app.js"></script>
+  </body>
+</html>

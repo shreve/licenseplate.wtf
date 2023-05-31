@@ -8,8 +8,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"licenseplate.wtf/html"
 	"licenseplate.wtf/model"
+	"licenseplate.wtf/views"
 )
 
 func currentPlate(w http.ResponseWriter, r *http.Request) (*model.Plate, bool) {
@@ -32,12 +32,13 @@ func currentPlate(w http.ResponseWriter, r *http.Request) (*model.Plate, bool) {
 }
 
 func (s *server) home(w http.ResponseWriter, r *http.Request) {
-	html.Home(w)
+	views.Home.Render(w, nil)
 }
 
 func (s *server) plateList(w http.ResponseWriter, r *http.Request) {
 	plates := model.AllPlates()
-	html.PlateList(w, html.ParamsMap{
+	log.Println(plates)
+	views.PlateList.Render(w, views.Params{
 		"Plates": plates,
 	})
 }
@@ -60,7 +61,7 @@ func (s *server) plateShow(w http.ResponseWriter, r *http.Request) {
 		[]string{"v1/plate", plate.Code, plate.UpdatedAt.String()},
 		func(out io.Writer) {
 			plate.LoadInterpretations()
-			html.PlateShow(out, html.ParamsMap{
+			views.PlateShow.Render(out, views.Params{
 				"Plate": plate,
 			})
 		},
@@ -87,7 +88,7 @@ func (s *server) interpretationCreate(w http.ResponseWriter, r *http.Request) {
 	if len(errors) > 0 {
 		log.Println("Rendering with errors", errors)
 		plate.LoadInterpretations()
-		html.PlateShow(w, html.ParamsMap{
+		views.PlateShow.Render(w, views.Params{
 			"Plate":  plate,
 			"Errors": errors,
 		})
@@ -99,7 +100,7 @@ func (s *server) interpretationCreate(w http.ResponseWriter, r *http.Request) {
 		log.Println("Problem creating")
 		errors = []string{"There was a problem saving your response. Please try again."}
 		plate.LoadInterpretations()
-		html.PlateShow(w, html.ParamsMap{
+		views.PlateShow.Render(w, views.Params{
 			"Plate":  plate,
 			"Errors": errors,
 		})

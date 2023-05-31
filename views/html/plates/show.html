@@ -1,0 +1,63 @@
+{{ define "content" }}
+<header>
+
+  <h2>WTF does this mean?</h2>
+
+  <div class="license-plate">
+    <h1>{{ .Plate.Code }}</h1>
+  </div>
+
+</header>
+<ul>
+  {{ range .Plate.Interpretations }}
+  <li class="comment">
+    <h4 class="what">{{ .What }}</h4>
+    <p class="why">{{ .Why }}</p>
+    <p class="credit">according to <b>{{ .Username }}</b></p>
+  </li>
+  {{ else }}
+  <li class="comment no-comments">
+    <p class="center">
+      <em>This license plate doesn't have any interpretations.</em>
+      <br>
+      <br>
+      <em>Want to add yours?</em>
+    </p>
+  </li>
+  {{ end }}
+</ul>
+
+<section class="comment-form">
+  <h4>Add Interpretation</h4>
+
+  {{ if .Errors }}
+  <ul class="form-errors">
+    {{ range .Errors }}
+    <li>{{ . }}</li>
+    {{ end }}
+  </ul>
+  {{ end }}
+
+  <form action="/plates/{{ .Plate.Code }}/interpretations" method="POST">
+
+    <div class="input">
+      <label for="what">What does it mean?</label>
+      <input type="text" name="what" minlength=5 maxlength=30 required/>
+    </div>
+
+    <div class="input">
+      <label for="why">Why do you think that?</label>
+      <textarea name="why" minlength=10 maxlength=300 required></textarea>
+    </div>
+
+    <input type="checkbox" name="responsibility" required/>
+    <label for="responsibility">I agree to be responsible</label>
+
+    <div class="input button-input">
+      <input type="submit" value="Chime In" />
+    </div>
+
+  </form>
+</section>
+</ul>
+{{ end }}

@@ -1,0 +1,11 @@
+{{ define "content" }}
+<header>
+  <h2>WTF do these mean?</h2>
+
+  {{ range .Plates }}
+  <a href="{{ .URL }}" class="license-plate small">
+    <h1>{{ .Code }}</h1>
+  </a>
+  {{ end }}
+</header>
+{{ end }}
