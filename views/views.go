@@ -67,7 +67,7 @@ var Home = View{
 
 var PlateShow = View{
 	Template:  "plates/show",
-	Title:     "What does the license plate {{.Plate.Code}} mean?",
+	Title:     "What does the license plate [{{.Plate.Code}}] mean?",
 	Canonical: "https://licenseplate.wtf/plates/{{.Plate.Code}}",
 }
 
