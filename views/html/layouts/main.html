@@ -5,14 +5,27 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <meta property="og:title" content="{{ .Title }}" />
     <title>{{ .Title }} :: licenseplate.wtf</title>
-    <link rel="stylesheet" href="/static/app.css" />
-    <link rel="canonical" href="{{ .Canonical }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
-      rel="stylesheet"
     />
+    <link rel="stylesheet" href="/static/app.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <link rel="canonical" href="{{ .Canonical }}" />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      />
+    </noscript>
   </head>
 
   <body>
