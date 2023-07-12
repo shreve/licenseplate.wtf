@@ -1,18 +1,9 @@
 $color: blue
 
-body
-  font-family: 'Share Tech Mono', Monaco, monospace
-  font-size: 12px
-  color: $color
-  margin: 0
-  padding: 0
-  min-height: 100vh
-
-*, *::before, *::after
-  box-sizing: border-box
+@import "base.sass"
 
 .container
-  width: 42em
+  width: 50rem
   max-width: 100%
   padding: 0 1.5em
   margin: 0 auto
@@ -23,28 +14,15 @@ body
 .content
   flex-grow: 1
 
-header
-  text-align: center
-
-em
-  text-align: center
-
-h1
-  font-size: 2.5em
-  text-align: center
-
-h2
-  font-size: 2.0em
-
-h4
-  font-size: 2em
-  margin: 0
-  text-transform: uppercase
 
 $t: 0.15em
 
+.wtf
+  display: block
+  margin: 0 0 0.5em
+
 .license-plate
-  font-size: 5em
+  font-size: 2.5em
   border: $t solid $color
   border-radius: $t
   color: $color
@@ -58,7 +36,10 @@ $t: 0.15em
   margin: 0 0 0.5em
 
   &.small
-    font-size: 2em
+    font-size: 2rem
+
+  &.big
+    font-size: 5em
 
   &::before, &::after
     position: absolute
@@ -96,26 +77,31 @@ $t: 0.15em
     margin: 0
 
 
-ul
-  padding: 0
 
 .comment
   list-style-type: none
-  margin: 2em 0 3em
+  margin: 1em 0
   border-left: 0.25em solid $color
-  padding-left: 1em
+  padding: 0.75em 0 0.75em 1.25em
+
+  .what
+    margin: 0 0 0.25em
+    text-transform: uppercase
+    font-weight: bold
 
   .why
-    margin: 0
+    font-size: 1.5em
 
   .credit
     text-align: right
-    font-size: 1.1em
+    font-size: 1.2em
     width: 100%
+    margin: 0
+    display: inline-block
 
-p
-  font-size: 1.5em
-  margin: 0 1.5em 1.5em
+  .user
+    font-weight: bold
+    font-style: italic
 
 
 .input
@@ -127,7 +113,6 @@ p
 
   label
     display: block
-    font-size: 1.25em
     width: 100%
     padding: 0.5em 0.5em 0
     background: transparent
@@ -144,6 +129,7 @@ p
     font-size: 2em
     color: inherit
     border: 0
+    background: none
 
     &:disabled
       background: transparent
@@ -158,8 +144,6 @@ p
     height: 3em
     resize: none
 
-label
-  vertical-align: middle
 
 input[type="checkbox"]
   border: 0.25em solid $color
@@ -171,15 +155,21 @@ input[type="checkbox"]
   position: relative
 
   &:checked::before
-    content: '\00D7'
-    font-size: 3em
-    top: 41%
-    left: -4%
+    content: '\2713'
+    font-size: 4rem
     position: absolute
+    color: red
     line-height: 0
+    height: 0
+    top: 50%
+    left: -10%
+    text-align: center
+
+input[type="checkbox"], input[type="submit"], label
+  cursor: pointer
 
 .button-input
-  width: 20em
+  width: fit-content
   margin: 0 0 0 auto
 
 .button

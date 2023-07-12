@@ -1,41 +1,44 @@
 {{ define "content" }}
+
 <header>
-
-  <h2>WTF does this mean?</h2>
-
-  <div class="license-plate">
-    <h1>{{ .Plate.Code }}</h1>
-  </div>
-
+  <h1><span class="wtf">WTF does this mean?</span>
+    <div class="license-plate">
+      {{- .Plate.Code -}}
+    </div>
+  </h1>
 </header>
-<ul>
-  {{ range .Plate.Interpretations }}
-  <li class="comment">
-    <h4 class="what">{{ .What }}</h4>
-    <p class="why">{{ .Why }}</p>
-    <p class="credit">according to <b>{{ .Username }}</b></p>
-  </li>
-  {{ else }}
-  <li class="comment no-comments">
-    <p class="center">
-      <em>This license plate doesn't have any interpretations.</em>
-      <br>
-      <br>
-      <em>Want to add yours?</em>
-    </p>
-  </li>
-  {{ end }}
-</ul>
 
-<section class="comment-form">
-  <h4>Add Interpretation</h4>
-
-  {{ if .Errors }}
-  <ul class="form-errors">
-    {{ range .Errors }}
-    <li>{{ . }}</li>
+<section>
+  <h2>What Others Are Saying</h2>
+  <ul class="comments">
+    {{ range .Plate.Interpretations }}
+      <li class="comment">
+        <h3 class="what">{{ .What }}</h3>
+        <span class="why">{{ .Why }}</span>
+        <span class="credit">according to <span class="user">{{ .Username }}</span></span>
+      </li>
+    {{ else }}
+      <li class="comment no-comments">
+        <p class="center">
+          <em>This license plate doesn't have any interpretations.</em>
+          <br>
+          <br>
+          <em>Want to add yours?</em>
+        </p>
+      </li>
     {{ end }}
   </ul>
+</section>
+
+<section class="comment-form">
+  <h2>Add Your Thoughts</h2>
+
+  {{ if .Errors }}
+    <ul class="form-errors">
+      {{ range .Errors }}
+        <li>{{ . }}</li>
+      {{ end }}
+    </ul>
   {{ end }}
 
   <form action="/plates/{{ .Plate.Code }}/interpretations" method="POST">
