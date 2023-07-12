@@ -68,7 +68,6 @@ function licenseplate(el) {
 }
 
 function autoexpand(el) {
-  el.setAttribute("data-baseheight", el.offsetHeight);
   let textarea = el.querySelector("textarea");
   if (!textarea) return;
 
