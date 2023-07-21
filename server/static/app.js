@@ -73,7 +73,9 @@ function autoexpand(el) {
 
   let refresh = () => {
     textarea.style.height = 0;
-    textarea.style.height = Math.max(50, textarea.scrollHeight) + "px";
+    if (textarea.scrollHeight > 50) {
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
   };
 
   refresh();
