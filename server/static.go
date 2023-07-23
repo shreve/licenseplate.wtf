@@ -9,7 +9,7 @@ import (
 	"runtime"
 )
 
-//go:embed static/app.css static/app.js
+//go:embed static/*.css static/*.js static/*.json static/*.png
 var files embed.FS
 var dev = os.Getenv("ENV") == "development"
 
