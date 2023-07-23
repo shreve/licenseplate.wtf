@@ -1,8 +1,8 @@
 function licenseplate(el) {
-  let input = el.querySelector("input");
+  const input = el.querySelector("input");
   if (!input) return;
 
-  let parentForm = (() => {
+  const parentForm = (() => {
     for (var form of document.querySelectorAll("form")) {
       let current = el;
       while (current != null && form != current) {
@@ -12,7 +12,7 @@ function licenseplate(el) {
     return form;
   })();
 
-  let refresh = () => {
+  const refresh = () => {
     // Make the width of the input match the text
     if (input.value == "" && input.hasAttribute("placeholder")) {
       input.setAttribute("size", input.getAttribute("placeholder").length);
@@ -24,14 +24,9 @@ function licenseplate(el) {
       parentForm.action = "/plates/" + input.value.trim().toUpperCase();
   };
 
-  let maxlen = parseInt(input.getAttribute("maxlength"));
-  let valid = /^[0-9a-zA-Z ]$/;
-  let validate = (e) => {
-    if (e.key == "Enter") {
-      betterSubmit();
-      return;
-    }
-
+  const maxlen = parseInt(input.getAttribute("maxlength"));
+  const valid = /^([0-9a-zA-Z ]|Enter)$/;
+  const validate = (e) => {
     // Only let in chars we want
     if (!e.key.match(valid)) {
       e.preventDefault();
@@ -54,17 +49,23 @@ function licenseplate(el) {
     if (e.target.value.length >= maxlen) return;
   };
 
-  let betterSubmit = (e) => {
+  const betterSubmit = (e) => {
+    console.log("betterSubmit", { parentForm });
     if (e) e.preventDefault();
 
-    if (parentForm.checkValidity()) window.location = parentForm.action;
-    else parentForm.reportValidity();
+    if (parentForm.checkValidity()) {
+      visit(parentForm.action);
+    } else {
+      parentForm.reportValidity();
+    }
   };
 
   refresh();
   input.addEventListener("input", refresh);
   input.addEventListener("keypress", validate);
-  if (parentForm) parentForm.addEventListener("submit", betterSubmit);
+  if (parentForm) {
+    parentForm.addEventListener("submit", betterSubmit);
+  }
 }
 
 function autoexpand(el) {
@@ -92,25 +93,76 @@ function replacePage(nextPage) {
   onPageLoad();
 }
 
+// We do have a service worker for an offline cache, but we should also keep an
+// in-memory cache of visited pages.
+const pageCache = {};
+
+async function visit(url, { addHistory, resetScroll } = {}) {
+  if (url == "") url = "/";
+  if (addHistory == undefined) addHistory = true;
+  if (resetScroll == undefined) resetScroll = true;
+
+  console.log("Visiting", {
+    url,
+    addHistory,
+    resetScroll,
+    history: history.length,
+  });
+
+  // If we don't have the page in our cache, add it.
+  if (!(url in pageCache)) {
+    pageCache[url] = await fetch(url).then((r) => r.text());
+  }
+
+  // If we're here, we the page. Use it.
+  if (addHistory) {
+    history.pushState({}, "", url);
+  }
+  replacePage(pageCache[url]);
+
+  // Scroll to the top of the page
+  if (resetScroll) window.scrollTo(0, 0);
+}
+
+window.visit = visit;
+
 function ajaxLink(el) {
   // Only handle links on this domain
   if (el.host != window.location.host) return;
 
   el.addEventListener("click", (e) => {
     e.preventDefault();
+    visit(el.href);
+  });
+}
 
-    fetch(el.href).then(async (r) => {
-      if (r.ok) {
-        replacePage(await r.text());
-        history.pushState({}, "", el.href);
-      } else {
-        console.error("Error fetching", el.href, r);
-      }
-    });
+function backButton() {
+  const button = document.querySelector("#back");
+
+  // If the button is missing, nothing to do
+  if (!button) return;
+
+  // Nowhere to go back from the homepage
+  if (location.pathname == "/") {
+    button.parentNode.removeChild(button);
+  }
+
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (history.length > 1) {
+      // Go back in the linear history
+      history.back();
+    } else {
+      // Go up the URL tree
+      console.log("Going up the URL tree");
+      visit(window.location.pathname.split("/").slice(0, -1).join("/"));
+    }
   });
 }
 
 function onPageLoad() {
+  backButton();
   licenseplate(document.querySelector(".license-plate"));
 
   for (var input of document.querySelectorAll(".input")) {
@@ -123,29 +175,18 @@ function onPageLoad() {
 }
 
 function startup() {
-  if (navigator && navigator.serviceWorker) {
-    navigator.serviceWorker.register("/service.js").then(
-      (reg) => {
-        console.log("Registered service worker", reg);
-      },
-      (err) => {
-        console.error("Error registering service worker", err);
-      },
-    );
+  // Remove debug statements outside dev
+  if (window.location.hostname !== "localhost") {
+    console.log = () => {};
   }
 
-  history.replaceState({}, "", window.location.href);
+  // Turn on the service worker
+  if (navigator && navigator.serviceWorker) {
+    navigator.serviceWorker.register("/service.js");
+  }
 
-  window.addEventListener("popstate", (e) => {
-    console.log("popstate", e);
-    fetch(window.location.href).then(async (r) => {
-      console.log("Fetched", r);
-      if (r.ok) {
-        replacePage(await r.text());
-      } else {
-        console.error("Error fetching", el.href, r);
-      }
-    });
+  window.addEventListener("popstate", () => {
+    visit(window.location.href, { addHistory: false, resetScroll: false });
   });
 
   onPageLoad();

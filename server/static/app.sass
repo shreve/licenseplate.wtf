@@ -187,11 +187,16 @@ input[type="checkbox"], input[type="submit"], label
 .center
   text-align: center
 
+.back
+  border: none
+  background: none
+  text-align: left
+  transform: scaleX(-1)
+  line-height: 1
+
 .logo
+  text-align: right
   text-decoration: none
-  color: $color
-  font-size: 2em
-  font-weight: bold
   padding: 0.5em 0
   display: block
 
@@ -199,14 +204,20 @@ nav
   width: 100%
   padding: 0 1.5em
 
-  &.header
-    border-bottom: 0.25em solid $color
-    text-align: right
+.header
+  border-bottom: 0.25em solid $color
+  display: flex
 
-  &.footer
-    border-top: 0.25em solid $color
-    margin-top: 1em
-    padding: 1em
+  *
+    flex-grow: 1
+    font-size: 2em
+    color: $color
+    font-weight: bold
+
+.footer
+  border-top: 0.25em solid $color
+  margin-top: 1em
+  padding: 1em
 
 .form-errors
   font-size: 1.5em
