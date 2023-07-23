@@ -79,10 +79,76 @@ function autoexpand(el) {
   };
 
   refresh();
-  input.addEventListener("input", refresh);
+  textarea.addEventListener("input", refresh);
 }
 
-licenseplate(document.querySelector(".license-plate"));
-for (var input of document.querySelectorAll(".input")) {
-  autoexpand(input);
+// Given a string of HTML, replace the current page with it
+function replacePage(nextPage) {
+  const container = document.querySelector("#container");
+  const newDoc = new DOMParser().parseFromString(nextPage, "text/html");
+  const newContainer = newDoc.querySelector("#container");
+  container.innerHTML = newContainer.innerHTML;
+  document.title = newDoc.title;
+  onPageLoad();
 }
+
+function ajaxLink(el) {
+  // Only handle links on this domain
+  if (el.host != window.location.host) return;
+
+  el.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    fetch(el.href).then(async (r) => {
+      if (r.ok) {
+        replacePage(await r.text());
+        history.pushState({}, "", el.href);
+      } else {
+        console.error("Error fetching", el.href, r);
+      }
+    });
+  });
+}
+
+function onPageLoad() {
+  licenseplate(document.querySelector(".license-plate"));
+
+  for (var input of document.querySelectorAll(".input")) {
+    autoexpand(input);
+  }
+
+  for (var link of document.querySelectorAll("a")) {
+    ajaxLink(link);
+  }
+}
+
+function startup() {
+  if (navigator && navigator.serviceWorker) {
+    navigator.serviceWorker.register("/service.js").then(
+      (reg) => {
+        console.log("Registered service worker", reg);
+      },
+      (err) => {
+        console.error("Error registering service worker", err);
+      },
+    );
+  }
+
+  history.replaceState({}, "", window.location.href);
+
+  window.addEventListener("popstate", (e) => {
+    console.log("popstate", e);
+    fetch(window.location.href).then(async (r) => {
+      console.log("Fetched", r);
+      if (r.ok) {
+        replacePage(await r.text());
+      } else {
+        console.error("Error fetching", el.href, r);
+      }
+    });
+  });
+
+  onPageLoad();
+}
+
+startup();

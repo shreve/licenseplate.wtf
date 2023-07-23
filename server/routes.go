@@ -6,7 +6,6 @@ import (
 
 func (s *server) routes() {
 	s.router = mux.NewRouter().StrictSlash(true)
-	s.router.PathPrefix("/static/").Handler(StaticFiles)
 
 	s.router.Use(s.logging)
 
@@ -15,4 +14,5 @@ func (s *server) routes() {
 	s.router.HandleFunc("/plates/{code}", s.plateShow)
 
 	s.router.HandleFunc("/plates/{code}/interpretations", s.interpretationCreate)
+	s.router.PathPrefix("/").Handler(StaticFiles)
 }

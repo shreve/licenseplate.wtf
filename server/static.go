@@ -27,5 +27,5 @@ var StaticFiles = func() http.Handler {
 		filesys = http.FS(f)
 	}
 
-	return http.StripPrefix("/static/", http.FileServer(filesys))
+	return http.FileServer(filesys)
 }()

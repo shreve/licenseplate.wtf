@@ -4,19 +4,19 @@
   "display": "standalone",
   "icons": [
     {
-      "src": "/static/icon_512.png",
+      "src": "/icon_512.png",
       "type": "image/png",
       "sizes": "512x512"
     },
     {
-      "src": "/static/icon_256.png",
+      "src": "/icon_256.png",
       "type": "image/png",
       "sizes": "256x256"
     },
     {
-      "src": "/static/favicon.png",
+      "src": "/favicon.png",
       "type": "image/png",
-      "sizes": "32x32"
+      "sizes": "64x64"
     }
   ]
 }
