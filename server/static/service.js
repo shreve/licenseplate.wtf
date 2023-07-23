@@ -17,14 +17,23 @@ const networkFailure = () => {
   });
 };
 
-const networkFirst = async ({ request }) => {
+const fetchAndCache = async (request) => {
   try {
-    // First try the network
-    const responseFromNetwork = await fetch(request.clone());
-    await putInCache(request, responseFromNetwork.clone());
-    return responseFromNetwork;
+    // Requests and responses can only be used once, so we need to clone them
+    const response = await fetch(request.clone());
+    await putInCache(request, response.clone());
+    return response;
   } catch (error) {
     console.error(error);
+    return null;
+  }
+};
+
+const networkFirst = async ({ request }) => {
+  // First try the network
+  const responseFromNetwork = await fetchAndCache(request);
+  if (responseFromNetwork) {
+    return responseFromNetwork;
   }
 
   // Then try the cache
@@ -37,22 +46,16 @@ const networkFirst = async ({ request }) => {
 };
 
 const cacheFirst = async ({ request }) => {
-  // First try to get the resource from the cache
+  // First try the cache
   const responseFromCache = await caches.match(request);
   if (responseFromCache) {
     return responseFromCache;
   }
 
-  // Next try to get the resource from the network
-  try {
-    const responseFromNetwork = await fetch(request.clone());
-    // response may be used only once
-    // we need to save clone to put one copy in cache
-    // and serve second one
-    putInCache(request, responseFromNetwork.clone());
+  // Then try the network
+  const responseFromNetwork = await fetchAndCache(request);
+  if (responseFromNetwork) {
     return responseFromNetwork;
-  } catch (error) {
-    console.error(error);
   }
 
   return networkFailure();
@@ -77,22 +80,22 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+const cacheOrigins = ["fonts.gstatic.com", "fonts.googleapis.com"];
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
+  const url = new URL(request.url);
 
   // Bug fix
   // https://stackoverflow.com/a/49719964
-  if (
-    event.request.cache === "only-if-cached" &&
-    event.request.mode !== "same-origin"
-  )
+  if (request.cache === "only-if-cached" && request.mode !== "same-origin")
     return;
 
-  //   // Prefer the cache for assets
-  //   if (!request.headers.get("Accept").includes("text/html")) {
-  //     event.respondWith(cacheFirst({ request }));
-  //     return;
-  //   }
+  // Prefer the cache for certain assets
+  if (cacheOrigins.indexOf(url.host) > -1) {
+    event.respondWith(cacheFirst({ request }));
+    return;
+  }
 
   // Prefer the network for HTML resources
   event.respondWith(networkFirst({ request }));
