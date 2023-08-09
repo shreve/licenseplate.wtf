@@ -86,6 +86,9 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
+  // Only handle GET requests
+  if (request.method !== "GET") return;
+
   // Bug fix
   // https://stackoverflow.com/a/49719964
   if (request.cache === "only-if-cached" && request.mode !== "same-origin")
