@@ -61,6 +61,9 @@ func (p *Plate) Valid() bool {
 	if len(p.Code) > 10 || len(p.Code) < 3 {
 		return false
 	}
+	if isNorty(p.Code) {
+		return false
+	}
 	return true
 }
 
