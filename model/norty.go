@@ -4,10 +4,13 @@ package model
 
 import (
 	"os"
+	"regexp"
 	"strings"
 )
 
 var nortyWords []string
+
+var isAlphaNum = regexp.MustCompile(`^[a-zA-Z0-9 ]+$`).MatchString
 
 func getNortyWords() []string {
 	// Read list of norty words from environment variable and split by newlines
